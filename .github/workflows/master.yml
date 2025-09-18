@@ -18,5 +18,6 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         server: ${{ secrets.FTP_SERVER }}
         port: ${{ secrets.FTP_PORT }}
+        local_path: './.'
         remote_path: '/var/www/html/dev.jigsawinnovation.com/tests'
         sftp_only: true
