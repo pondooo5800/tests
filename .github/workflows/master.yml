@@ -13,7 +13,7 @@ jobs:
 
     - name: 📂 Deploy via SFTP
       # เปลี่ยนมาใช้ appleboy/sftp-action
-      uses: appleboy/sftp-action@master
+    - uses: appleboy/sftp-action@v0.1.7
       with:
         host: '${{ secrets.FTP_SERVER }}'
         username: ${{ secrets.FTP_USERNAME }}
