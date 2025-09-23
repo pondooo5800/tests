@@ -1,41 +1,56 @@
+# from GitHub to server via GitHub Actions
+name: Publish Website on DEV
+
+# Controls when the workflow will run
 on:
+
+  # Triggers the workflow on push request event
+  # but only for the specific branch
   push:
-    branches:
-      - main
-name: 🚀 Deploy website on push
+    branches: [ main ]
+
+# A workflow run is made up of one or more jobs
+# that can run sequentially or in parallel
 jobs:
-  web-deploy:
-    name: 🎉 Deploy
+
+  # This workflow contains a single job called "SFTP-Deploy-Action"
+  SFTP-Deploy-Action:
+    name: SFTP-Deploy-Action
+
+    # The type of runner that the job will run on
+    # (depends on server but usually this value is works)
     runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks
+    # that will be executed as part of the job
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v4
 
-    - name: 📂 Deploy via SFTP
-      # เปลี่ยนมาใช้ appleboy/sftp-action
-    - uses: appleboy/sftp-action@v0.1.7
-      with:
-        host: '${{ secrets.FTP_SERVER }}'
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        port: ${{ secrets.FTP_PORT }}
+      # Checks-out your repository under $GITHUB_WORKSPACE,
+      # so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
 
-        # Path ต้นทางและปลายทาง (ชื่อ parameter จะเปลี่ยนไป)
-        source: './'
-        target: '/var/www/html/dev.jigsawinnovation.com/tests'
+          # Fetch all history for all tags and branches
+          fetch-depth: 0
 
-        # รายการไฟล์และโฟลเดอร์ที่ไม่ต้องการ deploy
-        exclude: |
-          **/.git*
-          **/.github/**
-          **/node_modules/**
-          **/tests/**
-          **/system/**
-          **/vendor/**
-          **/writable/**
-          **/.env*
-          **/.vscode*
-          **/.htaccess*
-          **/CLAUDE.md
-          **/README.md
-          **/*.log
+          # Checkout a specific branch
+          ref: main
+
+      # This is a composite GitHub Action (Linux runner)
+      # for deploying repository content to remote server
+      - name: SFTP-Deploy-Action
+        uses: milanmk/actions-file-deployer@master
+        with:
+          remote-protocol: sftp
+
+          # Credentials for SFTP access to server using GitHub secrets
+          remote-host: ${{ secrets.FTP_SERVER }}
+          remote-user: ${{ secrets.FTP_USERNAME }}
+          remote-password: ${{ secrets.FTP_PASSWORD }}
+
+          # Path for specific folder on server for files deployment
+          remote-path: /var/www/html/dev.jigsawinnovation.com/tests/
+
+          # Port for SFTP access to server
+          remote-port: 22
