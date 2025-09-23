@@ -1,56 +1,21 @@
-# from GitHub to server via GitHub Actions
-name: Publish Website on DEV
-
-# Controls when the workflow will run
+name: 🚀 Deploy website on push
 on:
-
-  # Triggers the workflow on push request event
-  # but only for the specific branch
   push:
-    branches: [ main ]
+    branches:
+      - main
 
-# A workflow run is made up of one or more jobs
-# that can run sequentially or in parallel
 jobs:
-
-  # This workflow contains a single job called "SFTP-Deploy-Action"
-  SFTP-Deploy-Action:
-    name: SFTP-Deploy-Action
-
-    # The type of runner that the job will run on
-    # (depends on server but usually this value is works)
+  web-deploy:
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks
-    # that will be executed as part of the job
     steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
 
-      # Checks-out your repository under $GITHUB_WORKSPACE,
-      # so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: 📂 Sync files to server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-
-          # Fetch all history for all tags and branches
-          fetch-depth: 0
-
-          # Checkout a specific branch
-          ref: main
-
-      # This is a composite GitHub Action (Linux runner)
-      # for deploying repository content to remote server
-      - name: SFTP-Deploy-Action
-        uses: milanmk/actions-file-deployer@master
-        with:
-          remote-protocol: sftp
-
-          # Credentials for SFTP access to server using GitHub secrets
-          remote-host: ${{ secrets.FTP_SERVER }}
-          remote-user: ${{ secrets.FTP_USERNAME }}
-          remote-password: ${{ secrets.FTP_PASSWORD }}
-
-          # Path for specific folder on server for files deployment
-          remote-path: /var/www/html/dev.jigsawinnovation.com/tests
-
-          # Port for SFTP access to server
-          remote-port: 22
+          server: '149.28.129.22'
+          username: 'root'
+          password: '%9Gxf(na+c-uKBxd'
+          server-dir: /var/www/html/dev.jigsawinnovation.com/tests/ # <-- 📝 แก้ไข path ที่นี่
